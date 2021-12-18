@@ -1,0 +1,13 @@
+<form [formGroup]="filterForm" (ngSubmit)="onSubmit()" class="filters">
+
+    <label for="name">Название: </label>
+    <input id="name" type="text" autocomplete="0" formControlName="nameControl">
+  
+    <label for="type">Тип: </label>
+    <select id="type" type="text" formControlName="typeControl">
+        <option selected>Все</option>
+        <option *ngFor="let companyType of linkedListComponent.companyTypes"> {{companyType}} </option>
+    </select> 
+    
+    <button type="submit" [disabled]="!filterForm.valid">Принять</button>
+</form>

@@ -1,0 +1,72 @@
+:host {
+    padding: 20px;
+    width: 40%;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+    box-shadow: 0 0 10px 2px gray;
+    border-radius: 15px;
+}
+
+label {
+    font-size: large;
+    margin-bottom: 5px;
+}
+
+
+button {
+    background-color: white;
+    border: none;
+    border: dashed 2px gray;
+    border-radius: 4px;
+}
+
+button:hover {
+    border-color: cornflowerblue;
+}
+
+button:active {
+    background-color: rgb(182, 204, 245);
+}
+
+.option-label {
+    border-bottom: solid 1px rgb(180, 180, 180);
+}
+
+.company-list {
+    height: 100%;
+    width: 100%;
+    border-bottom: solid 2px gray;
+    border-top: solid 2px gray;
+    align-self: center;
+}
+  
+.company-item {
+    height: 50px;
+    width: 100%;
+}
+
+.filter,
+.sort {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.sort-options {
+    display: flex;
+    gap: 5px;
+}
+
+.download-options {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cache-options {
+    display: flex;
+    gap: 10px;
+}

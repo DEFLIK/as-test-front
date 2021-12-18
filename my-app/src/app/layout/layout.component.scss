@@ -1,0 +1,15 @@
+:host {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+app-top-menu {
+    align-self: center;
+    top: 10px;
+    position: absolute;
+}

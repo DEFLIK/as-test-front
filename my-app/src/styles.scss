@@ -1,0 +1,27 @@
+/* You can add global styles to this file, and also import other style files */
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    scrollbar-color: white;
+}
+
+select {
+    outline: none;
+    border: none;
+    border-bottom: solid 2px gray;
+}
+
+input[type="text"] {
+    border: none;
+    border-bottom: solid 2px gray;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-bottom: solid 2px cornflowerblue;
+}

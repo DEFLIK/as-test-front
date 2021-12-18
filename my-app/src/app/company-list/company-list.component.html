@@ -1,0 +1,33 @@
+<div class="cache-options">
+    <label for="cache">Хранилище</label>
+    <select id="cache" type="text" [formControl]="cacheControl" #select (change)="storageService.loadStorage(select.value)">
+        <option *ngFor="let cacheType of storageService.cachingTypes | keyvalue" [value]="cacheType.value"> {{ cacheType.value }} </option>
+    </select>
+    <button (click)="storageService.clearSelectedStorage(select.value)">Обновить хранилище (кэш & лист)</button>
+</div>
+
+<div class="download-options">
+    <label for="count">Догружать по</label>
+    <input type="range" max="100" min="10" [formControl]="countControl" id="count">
+    <output [value]="countControl.value"></output>
+</div>
+
+<cdk-virtual-scroll-viewport itemSize="50" class="company-list" (scrolledIndexChange)="checkForScrollEnd()">
+    <div *cdkVirtualFor="let companyItem of companyItems | filter:nameToFilter:typeToFilter | sort:sortType" class="company-item">
+        <app-company-item [item]='companyItem' [routerLink]="['/detail', companyItem.id]"></app-company-item>
+    </div>
+</cdk-virtual-scroll-viewport>
+
+<div class="sort">
+    <label class="option-label">Сортировать по</label>
+    <div class="sort-options">
+        <app-company-sort [sortType]="sortTypes.name" [linkedListComponent]="this"></app-company-sort>
+        <app-company-sort [sortType]="sortTypes.type" [linkedListComponent]="this"></app-company-sort>
+        <app-company-sort [sortType]="sortTypes.industry" [linkedListComponent]="this"></app-company-sort> 
+    </div>
+</div>
+
+<div class="filter">
+    <label class="option-label">Фильтры</label>
+    <app-company-filter [linkedListComponent]="this"></app-company-filter>
+</div>

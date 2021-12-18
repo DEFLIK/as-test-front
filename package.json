@@ -1,0 +1,23 @@
+{
+  "name": "as-test-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DEFLIK/as-test-front.git"
+  },
+  "author": "Klim Savelyev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DEFLIK/as-test-front/issues"
+  },
+  "homepage": "https://github.com/DEFLIK/as-test-front#readme",
+  "dependencies": {
+    "@angular/cdk": "^13.1.1",
+    "@angular/cli": "^13.1.1"
+  }
+}

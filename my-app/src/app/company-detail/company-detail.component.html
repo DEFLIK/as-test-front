@@ -1,0 +1,13 @@
+<div class="info">
+    <span *ngIf="notFound" class="error">
+        В локальном хранилище не найдено деталей по данному запросу, <br> может быть стоит сначало прогрузить список?
+    </span>
+    <div *ngIf="!notFound" class="info-details">
+        <h1>Информация по компании {{ companyItem.name }}</h1>
+        <img [src]="companyItem.logo">
+        <label>Вид деятельности: {{ companyItem.industry }}</label>
+        <label>Слоган: {{ companyItem.details.catch_phrase }}</label>
+        <label>Номер: {{ companyItem.details.phone_number }}</label>
+        <label>Адресс: {{ companyItem.details.full_address }}</label>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+<div class="main-container">
+    <div id="map-main" class="map"></div>
+    <cdk-virtual-scroll-viewport itemSize="30" class="list">
+        <div *cdkVirtualFor="let companyItem of linkedCompanyItems" (click)="centerPlacemark(companyItem.id)" class="list-item"> <p>{{ companyItem.name }}</p> </div>
+    </cdk-virtual-scroll-viewport>
+</div>
+
+<div class="cache-options">
+    <label for="cache">Хранилище</label>
+    <select id="type" type="text" [formControl]="cacheControl" #select (change)="storageService.loadStorage(select.value)">
+        <option *ngFor="let cacheType of storageService.cachingTypes | keyvalue" [value]="cacheType.value"> {{ cacheType.value }} </option>
+    </select>
+</div>

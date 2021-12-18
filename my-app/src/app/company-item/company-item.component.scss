@@ -1,0 +1,26 @@
+img {
+    height: 100%;
+}
+
+.info {
+    margin: 5px;
+    display: flex;
+    height: 40px;
+    background-color: rgb(236, 236, 236);
+    gap: 10px;
+    align-items: center;
+    overflow: hidden;
+}
+
+.info:hover {
+    background-color: rgb(152, 183, 240);
+}
+
+.info-text {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 5px;
+}
+
+
