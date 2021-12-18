@@ -1,9 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { filter, from } from 'rxjs';
-import { CompanyItemComponent } from '../company-item/company-item.component';
 import { CompanyListComponent } from '../company-list/company-list.component';
-import { CompanyItem } from '../companyItem';
 
 @Component({
   selector: 'app-company-filter',
@@ -12,7 +9,11 @@ import { CompanyItem } from '../companyItem';
 })
 export class CompanyFilterComponent implements OnInit {
   @Input() public linkedListComponent!: CompanyListComponent;
-  public filterForm = new FormGroup({
+  public get filterForm() {
+    return this._filterForm;
+  }
+
+  private _filterForm = new FormGroup({
     nameControl: new FormControl(''),
     typeControl: new FormControl('Все'),
   });
@@ -27,7 +28,7 @@ export class CompanyFilterComponent implements OnInit {
   }
 
   public applyFilter() {
-    this.linkedListComponent.nameToFilter = this.filterForm.value.nameControl;
-    this.linkedListComponent.typeToFilter = this.filterForm.value.typeControl;
+    this.linkedListComponent.nameToFilter = this._filterForm.value.nameControl;
+    this.linkedListComponent.typeToFilter = this._filterForm.value.typeControl;
   }
 }

@@ -1,6 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CompanyItemComponent } from './company-item/company-item.component';
-import { CompanyItem } from './companyItem';
+import { CompanyItem } from '../models/companyItem';
 
 @Pipe({
   name: 'filter',
@@ -8,7 +7,7 @@ import { CompanyItem } from './companyItem';
 })
 export class FilterPipe implements PipeTransform {
   
-  transform(companyItems: CompanyItem[], name: string, type: string): any {
+  public transform(companyItems: CompanyItem[], name: string, type: string): any {
     if (!companyItems || (!name && !type)) {
       return companyItems;
     }

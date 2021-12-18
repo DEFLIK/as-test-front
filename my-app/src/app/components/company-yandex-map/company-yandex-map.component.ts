@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { CacheTypes } from '../cacher.service';
+import { CompanyItem } from 'src/app/models/companyItem';
+import { CacheTypes } from 'src/app/services/cacher.service';
+import { StorageService } from 'src/app/services/storage.service';
 import { StorageReactable } from '../company-list/company-list.component';
-import { CompanyItem } from '../companyItem';
-import { StorageService } from '../storage.service';
 
 // Для нормальной инициализации я использую тайпинги из интернета
 // ymaps.d.ts
@@ -13,72 +13,81 @@ import { StorageService } from '../storage.service';
   styleUrls: ['./company-yandex-map.component.scss']
 })
 export class CompanyYandexMapComponent implements OnInit, OnDestroy, StorageReactable {
-  @Output() linkedCompanyItems!: CompanyItem[];
-  @Output() public cacheControl = new FormControl();
-  @Output() public storageService: StorageService;
-  private map!: any;
-  private clusterer!: ymaps.Clusterer;
-  private collection!: ymaps.GeoObjectCollection;
-  private placemarks: Map<Number, ymaps.Placemark> = new Map();
-  
+  public get linkedCompanyItems() {
+    return this._linkedCompanyItems;
+  };
+  public get cacheControl() {
+    return this._cacheControl;
+  };
+  public get storageService() {
+    return this._storageService
+  };
+
+  private _linkedCompanyItems!: CompanyItem[];
+  private _cacheControl = new FormControl();
+  private _storageService: StorageService;
+  private _map!: any;
+  private _clusterer!: ymaps.Clusterer;
+  private _collection!: ymaps.GeoObjectCollection;
+  private _placemarks: Map<Number, ymaps.Placemark> = new Map();
 
   constructor(
     storageService: StorageService
-    ) { this.storageService = storageService; }
+    ) { this._storageService = storageService; }
 
   public async ngOnInit() {
     await ymaps.ready().then(() => { 
       this.initMap();
-      this.cacheControl.setValue(CacheTypes.session);
-      this.storageService.registerOnStorageChanged(this);
-      this.storageService.loadStorage(this.cacheControl.value);
+      this._cacheControl.setValue(CacheTypes.session);
+      this._storageService.registerOnStorageChanged(this);
+      this._storageService.loadStorage(this._cacheControl.value);
     });
   }
 
   public ngOnDestroy(): void {
-    this.storageService.unregisterOnStorageChanged(this);
+    this._storageService.unregisterOnStorageChanged(this);
   }
 
   public storageChangedReaction(data: CompanyItem[]) {
-    this.linkedCompanyItems = data;
+    this._linkedCompanyItems = data;
     this.removeMarkers();
     this.addMarkers(data);
   }
 
+  public centerPlacemark(id: Number) {
+    let coord = this._placemarks.get(id)?.geometry?.getCoordinates();
+    if (!coord) {
+      return;
+    }
+
+    this._map.setCenter(coord as number[]);
+  }
+
   private initMap() {
-    this.map = new ymaps.Map(
+    this._map = new ymaps.Map(
       'map-main', 
       {
         center: [56.981750014637555,49.34446269050328],
         zoom: 2
       }
     )
-    this.collection =  new ymaps.GeoObjectCollection();
-    this.clusterer = new ymaps.Clusterer();
+    this._collection =  new ymaps.GeoObjectCollection();
+    this._clusterer = new ymaps.Clusterer();
 
-    this.map.geoObjects.add(this.clusterer);
-    this.map.geoObjects.add(this.collection);
+    this._map.geoObjects.add(this._clusterer);
+    this._map.geoObjects.add(this._collection);
 
-    this.addMarkers(this.storageService.data);
+    this.addMarkers(this._storageService.data);
   }
 
   private addMarkers(data: CompanyItem[]) {
     let newPlacemarks = this.initializeGeoObjects(data);
-    this.clusterer.add(newPlacemarks);
+    this._clusterer.add(newPlacemarks);
   }
 
   private removeMarkers() {
-    this.clusterer.removeAll();
-    this.collection.removeAll();
-  }
-
-  public centerPlacemark(id: Number) {
-    let coord = this.placemarks.get(id)?.geometry?.getCoordinates();
-    if (!coord) {
-      return;
-    }
-
-    this.map.setCenter(coord as number[]);
+    this._clusterer.removeAll();
+    this._collection.removeAll();
   }
 
   private initializeGeoObjects(data: CompanyItem[]): ymaps.Placemark[] {
@@ -104,9 +113,9 @@ export class CompanyYandexMapComponent implements OnInit, OnDestroy, StorageReac
               'openEmptyBalloon': true,
               'openBalloonOnClick': true
           });
-          
+
       newPlacemarks.push(newPlacemark);
-      this.placemarks.set(item.id, newPlacemark);
+      this._placemarks.set(item.id, newPlacemark);
     }
 
     return newPlacemarks

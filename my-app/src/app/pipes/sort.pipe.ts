@@ -1,13 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { CompanyItemComponent } from './company-item/company-item.component';
-import { CompanyItem } from './companyItem';
+import { CompanyItem } from '../models/companyItem';
 
 @Pipe({
   name: 'sort'
 })
 export class SortPipe implements PipeTransform {
 
-  transform(list: CompanyItem[], type: SortMethods): CompanyItem[] {
+  public transform(list: CompanyItem[], type: SortMethods): CompanyItem[] {
     if (!type) {
       return list;
     }

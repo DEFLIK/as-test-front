@@ -1,0 +1,10 @@
+<div *ngIf="companyItem" class="info">
+    <img [src]="companyItem.logo">
+    <div class="info-text">
+        <span> {{ companyItem?.suffix}} </span>
+        <span> "{{ companyItem?.name }}" </span>
+        <span> {{ companyItem?.industry }} </span>
+        <span> {{ companyItem?.type }} </span>
+    </div>
+</div>
+

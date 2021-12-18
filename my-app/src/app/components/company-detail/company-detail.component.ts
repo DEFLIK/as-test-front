@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CacheTypes } from '../cacher.service';
-import { CompanyItem } from '../companyItem';
-import { CompanyItemsIndexer } from '../companyItemIndexer';
-import { StorageService } from '../storage.service';
+import { CompanyItem } from 'src/app/models/companyItem';
+import { CompanyItemsIndexer } from 'src/app/models/companyItemIndexer';
+import { CacheTypes } from 'src/app/services/cacher.service';
+import { StorageService } from 'src/app/services/storage.service';
+
 
 @Component({
   selector: 'app-company-detail',
@@ -11,8 +12,12 @@ import { StorageService } from '../storage.service';
   styleUrls: ['./company-detail.component.scss']
 })
 export class CompanyDetailComponent implements OnInit {
-  public notFound = false;
-  public companyItem!: CompanyItem;
+  @Input() public companyItem!: CompanyItem;
+  public get notFound() {
+    return this._notFound;
+  }
+
+  private _notFound = false;
 
   constructor(private route: ActivatedRoute, private storage: StorageService) {}
 
@@ -25,7 +30,7 @@ export class CompanyDetailComponent implements OnInit {
       this.storage.loadStorage(CacheTypes.local);
       res = CompanyItemsIndexer.getCompanyItem(itemId);
       if(!res) {
-        this.notFound = true;
+        this._notFound = true;
       } else {
         this.companyItem = res;
       }

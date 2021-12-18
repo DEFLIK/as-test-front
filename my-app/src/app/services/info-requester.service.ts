@@ -8,7 +8,6 @@ export class InfoRequesterService {
   constructor(private http: HttpClient) { }
 
   public getInfo(count: number) {
-    console.log('got', count)
     return this.http.get<EndPointData[]>(`https://random-data-api.com/api/company/random_company?size=${count}`);;
   }
 }

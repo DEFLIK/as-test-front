@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, Output, ViewChild } from '@angular/core';
-import { CompanyItem } from '../companyItem';
-import { EndPointData, InfoRequesterService } from '../info-requester.service';
-import { CompanyDetails } from '../companyDetails';
-import { CompanyItemsIndexer } from '../companyItemIndexer';
+import { CompanyDetails } from '../../models/companyDetails';
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
-import { SortMethods } from '../sort.pipe';
-import { CacheTypes } from '../cacher.service';
 import { FormControl } from '@angular/forms';
-import { StorageService } from '../storage.service';
+import { SortMethods } from 'src/app/pipes/sort.pipe';
+import { EndPointData, InfoRequesterService } from 'src/app/services/info-requester.service';
+import { StorageService } from 'src/app/services/storage.service';
+import { CacheTypes } from 'src/app/services/cacher.service';
+import { CompanyItem } from 'src/app/models/companyItem';
+import { CompanyItemsIndexer } from 'src/app/models/companyItemIndexer';
 
 @Component({
   selector: 'app-company-list',
@@ -17,60 +17,57 @@ import { StorageService } from '../storage.service';
 })
 @Output()
 export class CompanyListComponent implements OnInit, OnDestroy, StorageReactable {
-  @Output() public sortTypes = SortMethods;
+  public sortTypes = SortMethods;
+  public sortType!: SortMethods;
+  public nameToFilter!: string;
+  public typeToFilter!: string;
+  public companyTypes!: Set<string>;
+  public cacheTypes!: CacheTypes;
 
-  @Output() public companyItems: CompanyItem[] = [];
-  @Output() public sortType!: SortMethods;
-  @Output() public nameToFilter!: string;
-  @Output() public typeToFilter!: string;
-  @Output() public companyTypes!: Set<string>;
-  @Output() public storageService: StorageService;
-  @Output() public cacheTypes!: CacheTypes;
-  @Output() public cacheControl = new FormControl();
-  @Output() public countControl = new FormControl();
+  public get companyItems() {
+    return this._companyItems;
+  };
+  public get storageService() {
+    return this._storageService;
+  };
+  public get cacheControl() {
+    return this._cacheControl;
+  }
+  public get countControl() {
+    return this._countControl;
+  };
 
   @ViewChild(CdkVirtualScrollViewport, {static: false}) 
   private virtualScrollViewPort!: CdkVirtualScrollViewport;
+  private _companyItems: CompanyItem[] = [];
+  private _storageService: StorageService;
+  private _cacheControl = new FormControl();
+  private _countControl = new FormControl();
   private onAppendingState = false;
   
   
   constructor(
     private requestService: InfoRequesterService,
     storageService: StorageService
-    ) { this.storageService = storageService }
+    ) { this._storageService = storageService }
 
   public ngOnDestroy() {
-    console.log('lsit destroyed');
-    this.storageService.unregisterOnStorageChanged(this);
+    this._storageService.unregisterOnStorageChanged(this);
   }
 
   public ngOnInit(): void {
-    console.log('inited list', this);
     this.onAppendingState = true;
 
-    this.cacheControl.setValue(CacheTypes.session);
-    this.countControl.setValue(50);
+    this._cacheControl.setValue(CacheTypes.session);
+    this._countControl.setValue(50);
 
     // Закидываю в конец очереди через timeout, чтобы дать модулю виртуальной прокрукти 
     // загрузиться первым, перед тем как вкладывать в него дату и вызывать его рефреш
     setTimeout(() => {
-      this.storageService.registerOnStorageChanged(this);
-      this.storageService.loadStorage(this.cacheControl.value);
+      this._storageService.registerOnStorageChanged(this);
+      this._storageService.loadStorage(this._cacheControl.value);
       this.onAppendingState = false;
     });
-  }
-
-  private appendInfo() {
-    this.onAppendingState = true;
-
-    this.requestService
-      .getInfo(Number(this.countControl.value))
-      .subscribe((data) => {
-        this.initializeCompanyItems(data);
-        this.storageService.updateStorage(this.companyItems, this.cacheControl.value);
-        this.refreshVirtualScroll();
-        console.log('appending done', this.companyItems.length)
-      });
   }
 
   public checkForScrollEnd() {
@@ -82,28 +79,24 @@ export class CompanyListComponent implements OnInit, OnDestroy, StorageReactable
     const scrollLength = this.virtualScrollViewPort.getDataLength();
     console.log();
     if (scrollEnd >= scrollLength) {
-      console.log('List: scroll end')
       this.appendInfo();
     }
   }
 
   public storageChangedReaction(data: CompanyItem[]) {
     if (!data) {
-      console.log('List: got no data, appending')
       this.appendInfo();
       return;
     }
-    console.log('List: data got', data.length)
 
-    this.companyItems = data;
+    this._companyItems = data;
 
-    if (this.companyItems.length === 0) {
-      console.log('List: got empty data, appending');
+    if (this._companyItems.length === 0) {
       this.appendInfo();
     }
 
     this.virtualScrollViewPort.scrollToIndex(0);
-    this.companyTypes = new Set(this.companyItems.map(item => item.type));
+    this.companyTypes = new Set(this._companyItems.map(item => item.type));
     this.refreshVirtualScroll();
   }
 
@@ -118,9 +111,20 @@ export class CompanyListComponent implements OnInit, OnDestroy, StorageReactable
     // Но, похоже, иных способов затригерить обновление cdkVirtualScroll нет(
     // Поэтому закину эту операцию в другой поток
     // Также это поможет не срабатывать проверке на достижене конца списка, пока идет запрос новой информации
-    this.companyItems = await [...this.companyItems];
+    this._companyItems = await [...this._companyItems];
     this.onAppendingState = false;
-    console.log('List: refreshing...');
+  }
+
+  private appendInfo() {
+    this.onAppendingState = true;
+
+    this.requestService
+      .getInfo(Number(this._countControl.value))
+      .subscribe((data) => {
+        this.initializeCompanyItems(data);
+        this._storageService.updateStorage(this._companyItems, this._cacheControl.value);
+        this.refreshVirtualScroll();
+      });
   }
 
   private initializeCompanyItems(data: EndPointData[]): void {
@@ -149,9 +153,9 @@ export class CompanyListComponent implements OnInit, OnDestroy, StorageReactable
       )
       
       CompanyItemsIndexer.bindCompanyItem(item.id, companyItem);
-      this.companyItems.push(companyItem);
+      this._companyItems.push(companyItem);
     }
-    this.companyTypes = new Set(this.companyItems.map(item => item.type));
+    this.companyTypes = new Set(this._companyItems.map(item => item.type));
   }
 }
 

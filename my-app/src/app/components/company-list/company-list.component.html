@@ -14,7 +14,7 @@
 
 <cdk-virtual-scroll-viewport itemSize="50" class="company-list" (scrolledIndexChange)="checkForScrollEnd()">
     <div *cdkVirtualFor="let companyItem of companyItems | filter:nameToFilter:typeToFilter | sort:sortType" class="company-item">
-        <app-company-item [item]='companyItem' [routerLink]="['/detail', companyItem.id]"></app-company-item>
+        <app-company-item [companyItem]="companyItem" [routerLink]="['/detail', companyItem.id]"></app-company-item>
     </div>
 </cdk-virtual-scroll-viewport>
 

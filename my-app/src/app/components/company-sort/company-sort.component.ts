@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { SortMethods } from 'src/app/pipes/sort.pipe';
 import { CompanyListComponent } from '../company-list/company-list.component';
-import { SortMethods } from '../sort.pipe';
 
 @Component({
   selector: 'app-company-sort',

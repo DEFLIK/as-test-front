@@ -1,7 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { CompanyListComponent } from '../company-list/company-list.component';
-import { InfoRequesterService } from '../info-requester.service';
 
 @Component({
   selector: 'app-top-menu',
